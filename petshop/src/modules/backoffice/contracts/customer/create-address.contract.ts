@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Address } from "src/backoffice/models/address.model";
+import { Address } from "src/modules/backoffice/models/address.model";
 import { Flunt } from "src/utils/flunt";
 import { Contract } from "../constract";
 
