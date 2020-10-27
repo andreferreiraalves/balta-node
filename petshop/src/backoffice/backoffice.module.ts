@@ -3,6 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CustomerController } from './controllers/customer.controller';
 import { CustomerSchema } from './schemas/customer.schema';
 import { UserSchema } from './schemas/user.schema';
+import { AccountService } from './services/account.service';
+import { CustomerService } from './services/customer.service';
 
 @Module({
     imports: [
@@ -13,10 +15,14 @@ import { UserSchema } from './schemas/user.schema';
             },
             {
                 name: 'User',
-                schema: UserSchema,
-            },
+                schema: UserSchema
+            }
         ]),
     ],
-    controllers: [CustomerController]
+    controllers: [CustomerController],
+    providers: [
+        AccountService,
+        CustomerService,
+    ]
 })
 export class BackofficeModule { }

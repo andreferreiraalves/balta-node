@@ -1,4 +1,8 @@
 import * as mongoose from 'mongoose';
+import { Document } from 'mongoose';
+import { Customer } from '../models/customer.model';
+
+export type CustomerDocument = Customer & Document;
 
 export const CustomerSchema = new mongoose.Schema({
     name: {
