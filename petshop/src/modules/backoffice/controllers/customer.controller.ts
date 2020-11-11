@@ -1,8 +1,13 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, UseInterceptors } from '@nestjs/common';
 import { ValidatorInterceptor } from 'src/interceptors/validator.interceptor';
+import { CreateCreditCardContract } from '../contracts/customer/create-creditcard.contract';
 import { CreateCustommerContract } from '../contracts/customer/create-customer.contracts';
-import { CreateCustomerDto } from '../dtos/create-customer.dto';
+import { UpdateCustommerContract } from '../contracts/customer/update-customer.contract';
+import { QueryContract } from '../contracts/query.contract';
+import { CreateCustomerDto } from '../dtos/customer/create-customer.dto';
+import { UpdateCustomerDto } from '../dtos/customer/update-customer.dto';
 import { QueryDto } from '../dtos/query.dto';
+import { CreditCard } from '../models/credit-card.model';
 import { Customer } from '../models/customer.model';
 import { Result } from '../models/result.model';
 import { User } from '../models/user.model';
@@ -45,7 +50,32 @@ export class CustomerController {
     }
 
     @Post('query')
+    @UseInterceptors(new ValidatorInterceptor(new QueryContract()))
     async query(@Body() model: QueryDto) {
         return await this.customerService.query(model);
+    }
+
+    @Put(':document')
+    @UseInterceptors(new ValidatorInterceptor(new UpdateCustommerContract()))
+    async updateCustomer(@Param('document') document: string, @Body() model: UpdateCustomerDto) {
+        try {
+            const res = await this.customerService.update(document, model);
+            return new Result('Cliente atualizado com sucesso', true, res, undefined);
+        } catch (error) {
+            // Rollback manual
+            throw new HttpException(new Result('Não foi possível realizar a atualização', false, undefined, error), HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Put(':document')
+    @UseInterceptors(new ValidatorInterceptor(new CreateCreditCardContract()))
+    async createCreditCard(@Param('document') document: string, @Body() model: CreditCard) {
+        try {
+            const res = await this.customerService.saveOrUpdateCredCard(document, model);
+            return new Result(null, true, res, undefined);
+        } catch (error) {
+            // Rollback manual
+            throw new HttpException(new Result('Não foi possível realizar a atualização', false, undefined, error), HttpStatus.BAD_REQUEST)
+        }
     }
 }
